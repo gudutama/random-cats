@@ -13,7 +13,7 @@ class Program
         // ⚠️ ВАЖНО: Не забудь снова вписать название своего канала!
         string channelName = "glupiikotiki";
 
-        int maxPages = 50;
+        int maxPages = 100;
         int currentPage = 1;
 
         string currentUrl = $"https://t.me/s/{channelName}";
@@ -93,4 +93,5 @@ class Program
 
         Console.WriteLine("Файл cats.json успешно обновлен! Двигатель готов на 100%.");
     }
+
 }
