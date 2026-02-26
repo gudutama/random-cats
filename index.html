@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>glupiikotiki</title>
+    <style>
+        body {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; margin: 0; background-color: #1e1e1e; color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Стили для фото и видео */
+        .media-content {
+            max-width: 90%;
+            max-height: 70vh;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            display: none; /* Скрыто по умолчанию */
+        }
+
+        .loader { font-size: 20px; margin: 20px; }
+        
+        /* Немного отодвинем заголовок от картинки */
+        h1 { margin-bottom: 5px; margin-top: 5px; }
+        h2 { margin: 5px 0 15px 0;}
+    </style>
+</head>
+<body>
+
+    <h1>🐱Кот дня</h1>
+    <h2>а может и не кот...</h2>
+    
+    <div id="loading" class="loader">Ищем кота в базе...</div>
+    
+    <img id="cat-image" class="media-content" src="" alt="Кот дня">
+    <video id="cat-video" class="media-content" src="" controls autoplay loop muted></video>
+    
+    <script>
+        let catsDatabase = [];
+
+        async function loadDatabase() {
+            try {
+                const response = await fetch('cats.json'); 
+                catsDatabase = await response.json(); 
+                document.getElementById('loading').style.display = 'none';
+                showCatOfTheDay(); 
+            } catch (error) {
+                document.getElementById('loading').innerText = 'Ошибка загрузки базы котов :(';
+            }
+        }
+
+        // Умная функция: выдает всегда ОДНО И ТО ЖЕ число в течение одних суток
+        function getDailyRandomIndex(arrayLength) {
+            const now = new Date();
+            // Превращаем дату в одно число (например, 26 февраля 2026 = 20260226)
+            const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+            
+            // Используем синус, чтобы из даты сделать "случайную" дробь
+            const x = Math.sin(daySeed) * 10000;
+            const randomFraction = x - Math.floor(x);
+            
+            // Умножаем дробь на количество наших котов
+            return Math.floor(randomFraction * arrayLength);
+        }
+
+        function showCatOfTheDay() {
+            if (catsDatabase.length === 0) return;
+
+            // Вызываем нашу функцию привязки к дате вместо обычного рандома
+            const dailyIndex = getDailyRandomIndex(catsDatabase.length);
+            const mediaUrl = catsDatabase[dailyIndex];
+
+            const imgElement = document.getElementById('cat-image');
+            const videoElement = document.getElementById('cat-video');
+
+            imgElement.style.display = 'none';
+            videoElement.style.display = 'none';
+            videoElement.pause(); 
+
+            if (mediaUrl.includes('.mp4')) {
+                videoElement.src = mediaUrl;
+                videoElement.style.display = 'block';
+                videoElement.play();
+            } else {
+                imgElement.src = mediaUrl;
+                imgElement.style.display = 'block';
+            }
+        }
+
+        loadDatabase();
+    </script>
+
+</body>
+</html>
