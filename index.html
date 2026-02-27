@@ -54,10 +54,10 @@
 
    function getDailyRandomIndex(arrayLength) {
             const now = new Date();
-            // Та же формула, что в GitHub Actions
+            // Та самая формула из твоего yml
             const dateSeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
             
-            // Наша простая формула через золотое сечение
+            // Золотое сечение: просто и надежно
             return Math.floor((dateSeed / 1.618) % arrayLength);
         }
 
