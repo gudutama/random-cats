@@ -50,7 +50,6 @@ jobs:
           console.log(cats[index]);
         ")
         
-        # Вот эта строка изменена:
         curl -H "Content-Type: application/json" \
-             -d "{\"content\": \"@everyone\", \"embeds\": [{\"title\": \"Кот дня:\", \"image\": {\"url\": \"$DAILY_CAT\"}}]}" \
+             -d "{\"content\": \"@everyone\", \"embeds\": [{\"title\": \"Кот дня:\", \"description\": \"||[Сайт](https://gudutama.github.io/random-cats/)||\", \"image\": {\"url\": \"$DAILY_CAT\"}}]}" \
              ${{ secrets.DISCORD_WEBHOOK }}
