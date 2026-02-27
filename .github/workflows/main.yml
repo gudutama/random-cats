@@ -37,3 +37,17 @@ jobs:
         curl -H "Content-Type: application/json" \
              -d "{\"content\": \"🌟 **Кот дня с сайта!** \n$DAILY_CAT\"}" \
              ${{ secrets.DISCORD_WEBHOOK }}
+    - name: Отправка в Discord
+      run: |
+        DAILY_CAT=$(node -e "
+          const fs = require('fs');
+          const cats = JSON.parse(fs.readFileSync('cats.json'));
+          const now = new Date();
+          const dateSeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+          const index = Math.floor((dateSeed / 1.618) % cats.length);
+          console.log(cats[index]);
+        ")
+
+        curl -H "Content-Type: application/json" \
+             -d "{\"content\": \"🌟 **Кот дня** \n$DAILY_CAT\"}" \
+             ${{ secrets.DISCORD_WEBHOOK }}
