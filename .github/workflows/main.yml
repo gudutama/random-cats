@@ -35,7 +35,7 @@ jobs:
         git push
       
         curl -H "Content-Type: application/json" \
-             -d "{\"content\": \"🌟 **Кот дня с сайта!** \n$DAILY_CAT\"}" \
+             -d "{\"content\": \"🌟 **Кот дня** \n$DAILY_CAT\"}" \
              ${{ secrets.DISCORD_WEBHOOK }}
     - name: Отправка в Discord
       run: |
