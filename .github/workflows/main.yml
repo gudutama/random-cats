@@ -47,7 +47,7 @@ jobs:
           const index = Math.floor((dateSeed / 1.618) % cats.length);
           console.log(cats[index]);
         ")
-
-      curl -H "Content-Type: application/json" \
-             -d '{"content": "🌟 **Кот дня**\n'$DAILY_CAT'\n"}' \
+        
+        curl -H "Content-Type: application/json" \
+             -d "{\"content\": \"Кот дня:\n$DAILY_CAT\"}" \
              ${{ secrets.DISCORD_WEBHOOK }}
