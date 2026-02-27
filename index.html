@@ -53,13 +53,17 @@
         }
 
    function getDailyRandomIndex(arrayLength) {
-            const now = new Date();
-            // Та самая формула из твоего yml
-            const dateSeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
-            
-            // Золотое сечение: просто и надежно
-            return Math.floor((dateSeed / 1.618) % arrayLength);
-        }
+    const now = new Date();
+    // Формируем число из даты (ГГГГММДД)
+    const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+    
+    // Та самая математика с синусом из твоего .yml
+    const x = Math.sin(daySeed) * 10000;
+    const randomFraction = x - Math.floor(x);
+    
+    // Итоговый индекс
+    return Math.floor(randomFraction * arrayLength);
+}
 
         function showCatOfTheDay() {
             if (catsDatabase.length === 0) return;
