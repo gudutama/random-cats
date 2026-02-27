@@ -6,6 +6,9 @@ on:
     - cron: '50 23 * * *' # Каждый день в 03:00 ночи
   workflow_dispatch: # Позволяет нам запускать скрипт вручную по кнопке!
 
+env:
+  TZ: 'Europe/Warsaw' # Или твой город, например 'Europe/Kyiv'
+
 jobs:
   run-scraper:
     runs-on: ubuntu-latest # Робот включит виртуальный сервер на Linux
