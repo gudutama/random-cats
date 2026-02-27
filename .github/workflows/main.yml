@@ -33,10 +33,6 @@ jobs:
         git add cats.json
         git commit -m "Автоматическое обновление базы котов 🤖🐱" || echo "Новых котов пока нет"
         git push
-      
-        curl -H "Content-Type: application/json" \
-             -d "{\"content\": \"🌟 **Кот дня** \n$DAILY_CAT\"}" \
-             ${{ secrets.DISCORD_WEBHOOK }}
     - name: Отправка в Discord
       run: |
         DAILY_CAT=$(node -e "
