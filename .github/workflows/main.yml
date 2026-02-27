@@ -43,11 +43,14 @@ jobs:
           const fs = require('fs');
           const cats = JSON.parse(fs.readFileSync('cats.json'));
           const now = new Date();
-          const dateSeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
-          const index = Math.floor((dateSeed / 1.618) % cats.length);
+          const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+          const x = Math.sin(daySeed) * 10000;
+          const randomFraction = x - Math.floor(x);
+          const index = Math.floor(randomFraction * cats.length);
           console.log(cats[index]);
         ")
         
+        # Вот эта строка изменена:
         curl -H "Content-Type: application/json" \
-             -d "{\"embeds\": [{\"title\": \"Кот дня:\", \"image\": {\"url\": \"$DAILY_CAT\"}}]}" \
+             -d "{\"content\": \"@everyone\", \"embeds\": [{\"title\": \"Кот дня:\", \"image\": {\"url\": \"$DAILY_CAT\"}}]}" \
              ${{ secrets.DISCORD_WEBHOOK }}
