@@ -52,18 +52,13 @@
             }
         }
 
-        // Умная функция: выдает всегда ОДНО И ТО ЖЕ число в течение одних суток
-        function getDailyRandomIndex(arrayLength) {
+   function getDailyRandomIndex(arrayLength) {
             const now = new Date();
-            // Превращаем дату в одно число (например, 26 февраля 2026 = 20260226)
-            const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+            // Та же формула, что в GitHub Actions
+            const dateSeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
             
-            // Используем синус, чтобы из даты сделать "случайную" дробь
-            const x = Math.sin(daySeed) * 10000;
-            const randomFraction = x - Math.floor(x);
-            
-            // Умножаем дробь на количество наших котов
-            return Math.floor(randomFraction * arrayLength);
+            // Наша простая формула через золотое сечение
+            return Math.floor((dateSeed / 1.618) % arrayLength);
         }
 
         function showCatOfTheDay() {
