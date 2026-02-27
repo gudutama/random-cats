@@ -35,7 +35,7 @@ jobs:
         git push
       
         curl -H "Content-Type: application/json" \
-             -d "{\"content\": \"🌟 **Кот дня с сайта!** \n$DAILY_CAT\"}" \
+             -d "{\"content\": \"🌟 **Кот дня** \n$DAILY_CAT\"}" \
              ${{ secrets.DISCORD_WEBHOOK }}
     - name: Отправка в Discord
       run: |
@@ -48,6 +48,7 @@ jobs:
           console.log(cats[index]);
         ")
 
+        # Отправляем в Дискорд с красивой ссылкой
         curl -H "Content-Type: application/json" \
-             -d "{\"content\": \"🌟 **Кот дня** \n$DAILY_CAT\"}" \
+             -d "{\"content\": \"🌟 **Кот дня с сайта!** \n\n[Кот]($DAILY_CAT) \n"}" \
              ${{ secrets.DISCORD_WEBHOOK }}
