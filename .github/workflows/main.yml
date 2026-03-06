@@ -1,43 +1,38 @@
 name: Update Cats Database
 
-# Когда запускать скрипт?
 on:
   schedule:
-    - cron: '50 23 * * *' # Каждый день в 03:00 ночи
-  workflow_dispatch: # Позволяет нам запускать скрипт вручную по кнопке!
+    - cron: '50 23 * * *' # Каждый день в 03:00 по Warsaw
+  workflow_dispatch: # Запуск вручную по кнопке
 
 env:
-  TZ: 'Europe/Warsaw' # Или твой город, например 'Europe/Kyiv'
+  TZ: 'Europe/Warsaw'
 
 jobs:
   run-scraper:
-    runs-on: ubuntu-latest # Робот включит виртуальный сервер на Linux
-
+    runs-on: ubuntu-latest
     steps:
-    # 1. Робот скачивает твои файлы из репозитория
+
     - name: Скачиваем файлы
       uses: actions/checkout@v4
 
-    # 2. Робот устанавливает среду C# (.NET)
     - name: Устанавливаем .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x' # Устанавливаем последнюю версию (подойдет и для 6.0/7.0)
+        dotnet-version: '9.0.x'
 
-    # 3. Робот запускает твою программу!
     - name: Запускаем парсер
       run: dotnet run
 
-    # 4. Робот берет обновленный cats.json и сохраняет его на сайт
     - name: Сохраняем изменения на сайт
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git add cats.json
+        git add cats.json history.json
         git commit -m "Автоматическое обновление базы котов 🤖🐱" || echo "Новых котов пока нет"
         git push
 
-    - name: Отправка в Discord
+    - name: Отправка кота дня в Discord
       run: |
         DAILY_CAT=$(node -e "
           const fs = require('fs');
@@ -45,11 +40,23 @@ jobs:
           const now = new Date();
           const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
           const x = Math.sin(daySeed) * 10000;
-          const randomFraction = x - Math.floor(x);
-          const index = Math.floor(randomFraction * cats.length);
+          const index = Math.floor((x - Math.floor(x)) * cats.length);
           console.log(cats[index]);
         ")
-        
-        curl -H "Content-Type: application/json" \
-             -d "{\"content\": \"@everyone\", \"embeds\": [{\"title\": \"Кот дня:\", \"description\": \"||[Сайт](https://gudutama.github.io/random-cats/)||\", \"image\": {\"url\": \"$DAILY_CAT\"}}]}" \
-             ${{ secrets.DISCORD_WEBHOOK }}
+
+        IS_VIDEO=$(node -e "
+          const url = '$DAILY_CAT';
+          console.log(url.includes('/video/upload/') ? 'true' : 'false');
+        ")
+
+        if [ "$IS_VIDEO" = "true" ]; then
+          # Видео — отправляем просто ссылкой, Discord сам сделает превью
+          curl -s -H "Content-Type: application/json" \
+               -d "{\"content\": \"@everyone 🐱 Кот дня:\\n$DAILY_CAT\\n\\n||[Сайт](https://gudutama.github.io/random-cats/)||\"}" \
+               ${{ secrets.DISCORD_WEBHOOK }}
+        else
+          # Фото — отправляем через embed
+          curl -s -H "Content-Type: application/json" \
+               -d "{\"content\": \"@everyone\", \"embeds\": [{\"title\": \"🐱 Кот дня\", \"description\": \"||[Сайт](https://gudutama.github.io/random-cats/)||\", \"image\": {\"url\": \"$DAILY_CAT\"}, \"color\": 5793266}]}" \
+               ${{ secrets.DISCORD_WEBHOOK }}
+        fi
