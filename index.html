@@ -5,93 +5,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>glupiikotiki</title>
     <style>
+        * { box-sizing: border-box; }
         body {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh; margin: 0; background-color: #1e1e1e; color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #1e1e1e;
+            color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        /* Стили для фото и видео */
-        .media-content {
-            max-width: 90%;
-            max-height: 70vh;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            display: none; /* Скрыто по умолчанию */
+        h1 { margin-bottom: 5px; margin-top: 5px; }
+        h2 { margin: 5px 0 15px 0; color: #aaaaaa; font-weight: normal; }
+
+        .media-wrap {
+            width: 90vw;
+            max-width: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
         }
 
-        .loader { font-size: 20px; margin: 20px; }
-        
-        /* Немного отодвинем заголовок от картинки */
-        h1 { margin-bottom: 5px; margin-top: 5px; }
-        h2 { margin: 5px 0 15px 0;}
-        a {color: #ffffff; text-decoration: none;font-size: 10px; margin: 10px;}
+        /* Фото */
+        #cat-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            display: none;
+        }
+
+        /* Видео */
+        #cat-video {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            display: none;
+            background: #000;
+        }
+
+        .loader { font-size: 18px; color: #aaaaaa; }
+
+        /* Кнопка следующего кота */
+        #next-btn {
+            margin-top: 18px;
+            padding: 10px 28px;
+            font-size: 16px;
+            background: #5865F2;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #next-btn:hover { background: #4752c4; }
+
+        a { color: #aaaaaa; text-decoration: none; font-size: 12px; margin: 12px; }
+        a:hover { color: #ffffff; }
     </style>
 </head>
 <body>
-
-    <h1>🐱Кот дня</h1>
+    <h1>🐱 Кот дня</h1>
     <h2>а может и не кот...</h2>
-    
-    <div id="loading" class="loader">Ищем кота в базе...</div>
-    
-    <img id="cat-image" class="media-content" src="" alt="Кот дня">
-    <video id="cat-video" class="media-content" src="" controls autoplay loop muted></video>
+
+    <div class="media-wrap">
+        <div id="loading" class="loader">Ищем кота в базе...</div>
+        <img id="cat-image" src="" alt="Кот дня">
+        <video id="cat-video" controls autoplay loop muted playsinline></video>
+    </div>
+
+    <button id="next-btn" style="display:none" onclick="showRandom()">Следующий кот 🎲</button>
+
     <a href="https://t.me/glupiikotiki">source</a>
+
     <script>
         let catsDatabase = [];
 
         async function loadDatabase() {
             try {
-                const response = await fetch('cats.json'); 
-                catsDatabase = await response.json(); 
+                const response = await fetch('cats.json');
+                catsDatabase = await response.json();
                 document.getElementById('loading').style.display = 'none';
-                showCatOfTheDay(); 
+                document.getElementById('next-btn').style.display = 'inline-block';
+                showCatOfTheDay();
             } catch (error) {
                 document.getElementById('loading').innerText = 'Ошибка загрузки базы котов :(';
             }
         }
 
-   function getDailyRandomIndex(arrayLength) {
-    const now = new Date();
-    // Формируем число из даты (ГГГГММДД)
-    const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
-    
-    // Та самая математика с синусом из твоего .yml
-    const x = Math.sin(daySeed) * 10000;
-    const randomFraction = x - Math.floor(x);
-    
-    // Итоговый индекс
-    return Math.floor(randomFraction * arrayLength);
-}
+        // Кот дня — одинаковый для всех в этот день
+        function getDailyIndex(arrayLength) {
+            const now = new Date();
+            const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+            const x = Math.sin(daySeed) * 10000;
+            return Math.floor((x - Math.floor(x)) * arrayLength);
+        }
 
         function showCatOfTheDay() {
-            if (catsDatabase.length === 0) return;
+            const index = getDailyIndex(catsDatabase.length);
+            showMedia(catsDatabase[index]);
+        }
 
-            // Вызываем нашу функцию привязки к дате вместо обычного рандома
-            const dailyIndex = getDailyRandomIndex(catsDatabase.length);
-            const mediaUrl = catsDatabase[dailyIndex];
+        // Случайный кот по кнопке
+        function showRandom() {
+            const index = Math.floor(Math.random() * catsDatabase.length);
+            showMedia(catsDatabase[index]);
+        }
 
-            const imgElement = document.getElementById('cat-image');
-            const videoElement = document.getElementById('cat-video');
+        function showMedia(url) {
+            if (!url) return;
+            const img = document.getElementById('cat-image');
+            const video = document.getElementById('cat-video');
 
-            imgElement.style.display = 'none';
-            videoElement.style.display = 'none';
-            videoElement.pause(); 
+            img.style.display = 'none';
+            video.style.display = 'none';
+            video.pause();
 
-            if (mediaUrl.includes('.mp4')) {
-                videoElement.src = mediaUrl;
-                videoElement.style.display = 'block';
-                videoElement.play();
+            // Cloudinary видео — URL содержит /video/upload/
+            if (url.includes('/video/upload/') || url.endsWith('.mp4')) {
+                video.src = url;
+                video.style.display = 'block';
+                video.play().catch(() => {});
             } else {
-                imgElement.src = mediaUrl;
-                imgElement.style.display = 'block';
+                img.src = url;
+                img.style.display = 'block';
             }
         }
 
         loadDatabase();
     </script>
-
 </body>
-
 </html>
