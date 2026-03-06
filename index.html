@@ -89,8 +89,7 @@
             try {
                 const response = await fetch('cats.json');
                 catsDatabase = await response.json();
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('next-btn').style.display = 'inline-block';
+                document.getElementById('loading').style.display = 'none'
                 showCatOfTheDay();
             } catch (error) {
                 document.getElementById('loading').innerText = 'Ошибка загрузки базы котов :(';
@@ -140,4 +139,5 @@
     </script>
 </body>
 </html>
+
 
