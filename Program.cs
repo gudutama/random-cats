@@ -18,7 +18,7 @@ class Program
     static async Task Main(string[] args)
     {
         string channelName = "glupiikotiki";
-        int maxPages = 100;
+        int maxPages = 5;
         int currentPage = 1;
         string currentUrl = $"https://t.me/s/{channelName}";
 
@@ -207,3 +207,4 @@ class Program
         }
     }
 }
+
