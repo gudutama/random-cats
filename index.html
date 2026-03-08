@@ -85,16 +85,17 @@
     <script>
         let catsDatabase = [];
 
-        async function loadDatabase() {
-            try {
-                const response = await fetch('cats.json');
-                catsDatabase = await response.json();
-                document.getElementById('loading').style.display = 'none'
-                showCatOfTheDay();
-            } catch (error) {
-                document.getElementById('loading').innerText = 'Ошибка загрузки базы котов :(';
-            }
-        }
+    async function loadDatabase() {
+    try {
+        // Читаем кота дня из файла который создал бот
+        const response = await fetch('today.json');
+        const today = await response.json();
+        document.getElementById('loading').style.display = 'none';
+        showMedia(today.url);
+    } catch (error) {
+        document.getElementById('loading').innerText = 'Ошибка загрузки базы котов :(';
+    }
+}
 
         // Кот дня — одинаковый для всех в этот день
         function getDailyIndex(arrayLength) {
@@ -139,5 +140,6 @@
     </script>
 </body>
 </html>
+
 
 
