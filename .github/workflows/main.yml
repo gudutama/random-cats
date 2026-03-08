@@ -48,18 +48,22 @@ jobs:
           console.log(cats[index]);
         ")
 
+        # Сохраняем кота дня в файл
+        echo "{\"url\": \"$DAILY_CAT\"}" > today.json
+        git add today.json
+        git commit -m "Кот дня обновлён 🐱" 
+        git push
+
         IS_VIDEO=$(node -e "
           const url = '$DAILY_CAT';
           console.log(url.includes('/video/upload/') ? 'true' : 'false');
         ")
 
         if [ "$IS_VIDEO" = "true" ]; then
-          # Видео — отправляем просто ссылкой, Discord сам сделает превью
           curl -s -H "Content-Type: application/json" \
-               -d "{\"content\": \"@everyone 🐱 Кот дня:\\n$DAILY_CAT\\n\\n||[Сайт](https://gudutama.github.io/random-cats/)||\"}" \
+               -d "{\"content\": \"@everyone 🐱 Кот дня:\n$DAILY_CAT\n\n||[Сайт](https://gudutama.github.io/random-cats/)||\"}" \
                ${{ secrets.DISCORD_WEBHOOK }}
         else
-          # Фото — отправляем через embed
           curl -s -H "Content-Type: application/json" \
                -d "{\"content\": \"@everyone\", \"embeds\": [{\"title\": \"🐱 Кот дня\", \"description\": \"||[Сайт](https://gudutama.github.io/random-cats/)||\", \"image\": {\"url\": \"$DAILY_CAT\"}, \"color\": 5793266}]}" \
                ${{ secrets.DISCORD_WEBHOOK }}
