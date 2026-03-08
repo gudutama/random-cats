@@ -97,24 +97,6 @@
     }
 }
 
-        // Кот дня — одинаковый для всех в этот день
-        function getDailyIndex(arrayLength) {
-            const now = new Date();
-            const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
-            const x = Math.sin(daySeed) * 10000;
-            return Math.floor((x - Math.floor(x)) * arrayLength);
-        }
-
-        function showCatOfTheDay() {
-            const index = getDailyIndex(catsDatabase.length);
-            showMedia(catsDatabase[index]);
-        }
-
-        // Случайный кот по кнопке
-        function showRandom() {
-            const index = Math.floor(Math.random() * catsDatabase.length);
-            showMedia(catsDatabase[index]);
-        }
 
         function showMedia(url) {
             if (!url) return;
@@ -140,6 +122,7 @@
     </script>
 </body>
 </html>
+
 
 
 
