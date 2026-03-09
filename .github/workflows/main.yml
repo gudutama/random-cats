@@ -2,7 +2,7 @@ name: Update Cats Database
 
 on:
   schedule:
-    - cron: '50 23 * * *' # Каждый день в 03:00 по Warsaw
+    - cron: '00 23 * * *' # Каждый день в 03:00 по Warsaw
   workflow_dispatch: # Запуск вручную по кнопке
 
 env:
