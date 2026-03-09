@@ -88,7 +88,7 @@
     async function loadDatabase() {
     try {
         // Читаем кота дня из файла который создал бот
-        const response = await fetch('today.json');
+      const response = await fetch('today.json?t=' + Date.now());
         const today = await response.json();
         document.getElementById('loading').style.display = 'none';
         showMedia(today.url);
@@ -122,6 +122,7 @@
     </script>
 </body>
 </html>
+
 
 
 
