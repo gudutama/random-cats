@@ -51,8 +51,8 @@ jobs:
         # Сохраняем кота дня в файл
         echo "{\"url\": \"$DAILY_CAT\"}" > today.json
         git add today.json
-        git commit -m "Кот дня обновлён 🐱" 
-        git push
+        git commit -m "Кот дня обновлён 🐱" || echo "today.json не изменился"
+        git push || echo "Нечего пушить"
 
         IS_VIDEO=$(node -e "
           const url = '$DAILY_CAT';
