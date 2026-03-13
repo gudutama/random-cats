@@ -61,7 +61,7 @@ jobs:
 
         if [ "$IS_VIDEO" = "true" ]; then
           curl -s -H "Content-Type: application/json" \
-               -d "{\"content\": \"@everyone 🐱 Кот дня:\n$DAILY_CAT\"}" \
+               -d "{\"content\": \"@everyone 🐱 Кот дня:\n$DAILY_CAT\n||[Сайт](https://gudutama.github.io/random-cats/)||\"}" \
                ${{ secrets.DISCORD_WEBHOOK }}
         else
           curl -s -H "Content-Type: application/json" \
